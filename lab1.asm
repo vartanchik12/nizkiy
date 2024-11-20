@@ -7,56 +7,49 @@ section .data
     newline db 10, 0
 
 section .bss
-    input resb 256    ; Буфер для строки длиной до 255 символов (плюс нулевой байт)
-    length resd 1     ; Длина строки
-    is_palindrome resb 1 ; Флаг проверки палиндрома
+    input resb 256    
+    length resd 1     
+    is_palindrome resb 1 
 
 section .text
     global main
 
 main:
-    ; Печать приглашения
     PRINT_STRING prompt
 
-    ; Считать строку
     GET_STRING input, 256
 
-    ; Определить длину строки
-    mov ecx, input         ; Указатель на строку
-    xor eax, eax           ; Счётчик длины
+    mov ecx, input         
+    xor eax, eax           
 find_length:
-    cmp byte [ecx + eax], 0 ; Проверить на конец строки (нулевой байт)
+    cmp byte [ecx + eax], 0 
     je length_found
     inc eax
     jmp find_length
 length_found:
-    mov [length], eax       ; Сохранить длину строки
+    mov [length], eax       
 
-    ; Установить флаг палиндрома
     mov byte [is_palindrome], 1
 
-    ; Проверка строки на палиндром
-    mov ecx, 0              ; Начало строки
-    mov edx, eax            ; Конец строки (длина - 1)
-    dec edx                 ; Учитываем индексацию с нуля
+    mov ecx, 0              
+    mov edx, eax            
+    dec edx                 
 
 check_palindrome:
-    cmp ecx, edx            ; Если указатели встретились или пересеклись
+    cmp ecx, edx            
     jge end_check
-
-    ; Сравнение символов
-    mov al, [input + ecx]   ; Символ с начала
-    mov bl, [input + edx]   ; Символ с конца
+ 
+    mov al, [input + ecx]   
+    mov bl, [input + edx]   
     cmp al, bl
-    jne not_palindrome      ; Если не совпадают, это не палиндром
+    jne not_palindrome      
 
-    ; Перейти к следующей паре символов
     inc ecx
     dec edx
     jmp check_palindrome
 
 not_palindrome:
-    mov byte [is_palindrome], 0 ; Установить флаг "не палиндром"
+    mov byte [is_palindrome], 0 
 
 end_check:
     ; Вывод результата
